@@ -1,0 +1,18 @@
+
+
+CREATE COMPUTE MODULE LoadGlobalCache_Compute
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+		
+		DECLARE InBlob BLOB;
+		SET InBlob = ASBITSTREAM(InputRoot.XMLNSC, InputRoot.Properties.Encoding, InputRoot.Properties.CodedCharSetId);
+		CALL LoadXMLToCacheESQL('GBKey', InBlob);
+		SET OutputRoot.XMLNSC.Message.Value = 'Successfully Loaded';
+		RETURN TRUE;
+	END;
+
+	CREATE PROCEDURE LoadXMLToCacheESQL(IN key CHAR, IN Value BLOB)
+	LANGUAGE JAVA
+	EXTERNAL NAME "GlobalCacheClass.LoadXMLToCache";
+
+END MODULE;

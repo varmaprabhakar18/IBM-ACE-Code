@@ -1,0 +1,25 @@
+
+
+CREATE COMPUTE MODULE GetGlobalCache_Compute
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+
+		DECLARE xml BLOB;
+		SET xml = GetCacheValueESQL('GBKey');
+		
+		IF (xml IS NOT NULL OR xml <> '') THEN
+			
+			CREATE LASTCHILD OF OutputRoot DOMAIN 'XMLNSC' NAME 'XMLNSC';
+			CREATE LASTCHILD OF OutputRoot.XMLNSC PARSE(xml OPTIONS FolderBitStream CCSID InputRoot.Properties.CodedCharSetId);
+		ELSE
+			SET OutputRoot.XMLNSC.Message.Value = 'Problem getting cache'; 
+			
+		END IF;	
+		RETURN TRUE;
+	END;
+
+	CREATE PROCEDURE GetCacheValueESQL(IN Key CHAR) RETURNS BLOB
+	LANGUAGE JAVA
+	EXTERNAL NAME "GlobalCacheClass.GetCacheValue";
+	
+END MODULE;

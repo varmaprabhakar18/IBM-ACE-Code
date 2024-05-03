@@ -1,0 +1,22 @@
+DECLARE DSN_NAME EXTERNAL CHARACTER;
+
+CREATE COMPUTE MODULE DN_MF_Compute 
+	CREATE FUNCTION Main() RETURNS BOOLEAN
+	BEGIN
+
+		DECLARE inRef REFERENCE TO InputRoot.XMLNSC;
+		DECLARE ID INT;
+		SET ID = inRef.Emp_Details.PersonID;
+		DECLARE lastName, firstName, addr, cityName CHARACTER;
+		SET lastName = inRef.Emp_Details.LASTNAME;
+		SET firstName = inRef.Emp_Details.FIRSTNAME;
+		SET addr = inRef.Emp_Details.ADDRESS;
+		SET cityName = inRef.Emp_Details.CITY;
+		
+--Commented as I have used it Database using DSN		
+--		INSERT INTO Database.PERSONS VALUES(ID, lastName, firstName, addr, cityName);
+
+--Tried inserting the data using external character. If we don't add DSN and try to insert. In this senario it will give error.		
+		INSERT INTO DSN_NAME.PERSONS VALUES(ID, lastName, firstName, addr, cityName);
+	END;
+END MODULE;
